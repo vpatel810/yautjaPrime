@@ -30,3 +30,17 @@ def square_root(number: float) -> float:
     if number < 0:
         raise ValueError("Cannot calculate the square root of a negative number.")
     return math.sqrt(number)
+
+
+def sin(angle: float) -> float:
+    """
+    Calculate the sine of an angle in radians.
+
+    Args:
+        angle (float): The angle in radians.
+
+    Returns:
+        float: The sine of the angle.
+    """
+    return math.sin(angle)
+
