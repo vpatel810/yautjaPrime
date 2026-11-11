@@ -4,6 +4,7 @@ from operations import power, square_root
 def test_power():
     assert power(2, 3) == 8
     assert power(5, 0) == 1
+    assert power(5, 2) == 25
     with pytest.raises(ValueError):
         power(2, -1)
 
