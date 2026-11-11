@@ -11,5 +11,6 @@ def test_power():
 def test_square_root():
     assert square_root(4) == 2
     assert square_root(9) == 3
+    assert square_root(0) == 0
     with pytest.raises(ValueError):
         square_root(-1)
