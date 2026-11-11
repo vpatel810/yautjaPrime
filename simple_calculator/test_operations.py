@@ -2,7 +2,7 @@ from operations import addition, subtraction
 
 
 def test_addition():
-    assert addition(2, 3) == 5
+    assert addition(3, 2) == 5
     assert addition(-1, 1) == 0
     assert addition(0, 0) == 0
 
