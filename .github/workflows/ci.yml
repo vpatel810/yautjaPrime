@@ -1,0 +1,60 @@
+name: Monorepo Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    name: Detect Changed Services
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Detect changes
+        id: filter
+        uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            simple_calculator:
+              - 'simple_calculator/**'
+            advanced_calculator:
+              - 'advanced_calculator/**'
+
+  test:
+    name: Run Tests for ${{ matrix.service }}
+    needs: detect-changes
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ${{ fromJSON(needs.detect-changes.outputs.services) }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: '.python-version'
+          cache: 'pip'
+          cache-dependency-path: '${matrix.service}/requirements.txt'
+      - name: Install dependencies & run tests
+        working-directory: ${{ matrix.service }}
+        run: |
+          pip install -r requirements.txt
+          pytest -v
+
+  all-tests-passed:
+    name: All Tests Passed
+    needs: [detect-changes, test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check if all tests passed
+        run: |
+          if [ "${{ needs.test.result }}" = "failure" ] || [ "${{ needs.detect-changes.result }} != "success"]; then
+            echo "Some tests failed."
+            exit 1
+          else
+            echo "All tests passed or were skipped."
+          fi
