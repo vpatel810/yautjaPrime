@@ -1,0 +1,11 @@
+merge_queue:
+  mode: parallel
+scopes:
+  source:
+    files:
+      simple_calculator:
+        include:
+          - simple_calculator/**
+      advanced_calculator:
+        include:
+          - advanced_calculator/**
