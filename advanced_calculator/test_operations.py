@@ -1,5 +1,6 @@
 import pytest
-from operations import power, square_root
+import math
+from operations import power, square_root, sin
 
 def test_power():
     assert power(2, 3) == 8
@@ -15,3 +16,8 @@ def test_square_root():
     assert square_root(0) == 0
     with pytest.raises(ValueError):
         square_root(-1)
+
+
+def test_sin():
+    assert sin(0) == 0
+
