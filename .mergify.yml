@@ -1,11 +1,49 @@
-merge_queue:
-  mode: parallel
-scopes:
-  source:
-    files:
-      simple_calculator:
-        include:
-          - simple_calculator/**
-      advanced_calculator:
-        include:
-          - advanced_calculator/**
+queue_rules:
+  - name: simple-calc-queue
+    merge_conditions:
+      - check-success=all-tests-passed
+    merge_method: squash
+    batch_size: 3
+
+  - name: advanced-calc-queue
+    merge_conditions:
+      - check-success=all-tests-passed
+    merge_method: squash
+    batch_size: 3
+
+  - name: monorepo-global-queue
+    merge_conditions:
+      - check-success=all-tests-passed
+    merge_method: squash
+    batch_size: 2
+
+pull_request_rules:
+  - name: Queue Simple Calculator PRs
+    conditions:
+      - base=main
+      - files~=^simple_calculator/
+      - -files~=^advanced_calculator/
+    actions:
+      queue:
+        name: simple-calc-queue
+
+  - name: Queue Advanced Calculator PRs
+    conditions:
+      - base=main
+      - files~=^advanced_calculator/
+      - -files~=^simple_calculator/
+    actions:
+      queue:
+        name: advanced-calc-queue
+
+  - name: Queue Cross-Cutting PRs
+    conditions:
+      - base=main
+      - or:
+          - and:
+              - files~=^simple_calculator/
+              - files~=^advanced_calculator/
+          - -files~=^(simple_calculator|advanced_calculator)/
+    actions:
+      queue:
+        name: monorepo-global-queue
